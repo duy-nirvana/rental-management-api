@@ -35,7 +35,7 @@ exports.getAll = async (req, res) => {
 
     const invoices = await Invoice.find(filter)
       .populate("room", "name floor")
-      .populate("landlord", "fullName email")
+      // .populate("landlord", "fullName email")
       .sort({ createdAt: -1 })
       .lean();
     res.json(invoices);
@@ -60,7 +60,7 @@ exports.getById = async (req, res) => {
 
 // POST /invoices — tạo hóa đơn mới
 // Nếu không truyền electricity.amount / water.amount thì tự tính từ chỉ số và đơn giá
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   try {
     const body = req.body;
 
@@ -108,7 +108,10 @@ exports.create = async (req, res) => {
     const saved = await invoice.save();
     res.status(201).json(saved);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error("Error creating invoice:", err);
+    res.status(400).json({ message: err.message, error: err.stack });
+  } finally {
+    next();
   }
 };
 

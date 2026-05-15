@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const autoIncrementPlugin = require("../plugins/autoIncrement");
 
 // Phí phát sinh tùy ý: có thể dương (phụ thu) hoặc âm (giảm trừ)
 const surchargeSchema = new Schema(
   {
-    description: { type: String, required: true, trim: true },
-    amount: { type: Number, required: true }, // âm = giảm trừ
+    description: { type: String, trim: true },
+    amount: { type: Number }, // âm = giảm trừ
   },
   { _id: false },
 );
@@ -26,11 +27,11 @@ const invoiceSchema = new Schema(
       ref: "Room",
       required: true,
     },
-    landlord: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    // landlord: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: "User",
+    //   required: true,
+    // },
 
     // ---- Kỳ thanh toán ----
     billingPeriod: {
@@ -82,5 +83,10 @@ const invoiceSchema = new Schema(
   },
   { timestamps: true },
 );
+
+invoiceSchema.plugin(autoIncrementPlugin, {
+  field: "invoiceNo",
+  counterName: "invoice_invoiceNo",
+});
 
 module.exports = mongoose.model("Invoice", invoiceSchema);

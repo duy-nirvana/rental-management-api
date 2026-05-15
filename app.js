@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var multer = require("multer");
+var cors = require("cors");
 const connectDB = require("./app/config/db");
 var indexRouter = require("./app/routes/index");
 var usersRouter = require("./app/routes/users");
@@ -20,6 +21,7 @@ connectDB();
 app.set("views", path.join(__dirname, "app/views"));
 app.set("view engine", "jade");
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
